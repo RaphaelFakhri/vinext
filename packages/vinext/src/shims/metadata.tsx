@@ -206,8 +206,8 @@ export type Metadata = {
     url?: string | URL;
     siteName?: string;
     images?: string | URL | SocialImageDescriptor | Array<string | URL | SocialImageDescriptor>;
-    videos?: Array<{ url: string | URL; width?: number; height?: number }>;
-    audio?: Array<{ url: string | URL }>;
+    videos?: OGVideo | OGVideo[];
+    audio?: OGAudio | OGAudio[];
     locale?: string;
     type?: string;
     publishedTime?: string;
@@ -315,6 +315,24 @@ type TwitterAppDescriptor = {
   };
   name?: string;
 };
+
+type OGVideoDescriptor = {
+  url: string | URL;
+  secureUrl?: string | URL;
+  type?: string;
+  width?: string | number;
+  height?: string | number;
+};
+
+type OGVideo = string | URL | OGVideoDescriptor;
+
+type OGAudioDescriptor = {
+  url: string | URL;
+  secureUrl?: string | URL;
+  type?: string;
+};
+
+type OGAudio = string | URL | OGAudioDescriptor;
 
 type SocialImageDescriptor = {
   url: string | URL;
@@ -1122,9 +1140,24 @@ export function MetadataHead({
         }
       }
     }
+    // Next.js accepts a single value or an array, and each entry may be a
+    // plain URL or a descriptor.
     if (og.videos) {
-      for (const video of og.videos) {
+      const videos = normalizeUrlDescriptorEntries(og.videos, (url): OGVideoDescriptor => ({
+        url,
+      }));
+      for (const video of videos) {
         elements.push(<meta key={key++} property="og:video" content={resolveUrl(video.url)} />);
+        if (video.secureUrl)
+          elements.push(
+            <meta
+              key={key++}
+              property="og:video:secure_url"
+              content={resolveUrl(video.secureUrl)}
+            />,
+          );
+        if (video.type)
+          elements.push(<meta key={key++} property="og:video:type" content={video.type} />);
         if (video.width)
           elements.push(
             <meta key={key++} property="og:video:width" content={String(video.width)} />,
@@ -1136,8 +1169,19 @@ export function MetadataHead({
       }
     }
     if (og.audio) {
-      for (const audio of og.audio) {
+      const audios = normalizeUrlDescriptorEntries(og.audio, (url): OGAudioDescriptor => ({ url }));
+      for (const audio of audios) {
         elements.push(<meta key={key++} property="og:audio" content={resolveUrl(audio.url)} />);
+        if (audio.secureUrl)
+          elements.push(
+            <meta
+              key={key++}
+              property="og:audio:secure_url"
+              content={resolveUrl(audio.secureUrl)}
+            />,
+          );
+        if (audio.type)
+          elements.push(<meta key={key++} property="og:audio:type" content={audio.type} />);
       }
     }
   }
