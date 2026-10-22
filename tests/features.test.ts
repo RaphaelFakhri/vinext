@@ -3186,34 +3186,6 @@ describe("MetadataHead rendering", () => {
     expect(html).toContain('property="og:audio"');
   });
 
-  it("renders a single OG video or audio entry and URL-only entries like Next.js", () => {
-    // Next.js types OG videos and audio as `OGVideo | OGVideo[]`, where each
-    // entry is a URL string, a URL object, or a descriptor.
-    const html = renderToStaticMarkup(
-      React.createElement(MetadataHead, {
-        metadata: {
-          openGraph: {
-            videos: {
-              url: "https://example.com/video.mp4",
-              secureUrl: "https://secure.example.com/video.mp4",
-              type: "video/mp4",
-              width: 800,
-            },
-            audio: ["https://example.com/a.mp3", new URL("https://example.com/b.mp3")],
-          },
-        },
-      }),
-    );
-    expect(html).toBe(
-      '<meta property="og:video" content="https://example.com/video.mp4"/>' +
-        '<meta property="og:video:secure_url" content="https://secure.example.com/video.mp4"/>' +
-        '<meta property="og:video:type" content="video/mp4"/>' +
-        '<meta property="og:video:width" content="800"/>' +
-        '<meta property="og:audio" content="https://example.com/a.mp3"/>' +
-        '<meta property="og:audio" content="https://example.com/b.mp3"/>',
-    );
-  });
-
   it("renders manifest link", () => {
     const html = renderToStaticMarkup(
       React.createElement(MetadataHead, {

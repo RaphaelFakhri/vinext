@@ -1141,19 +1141,23 @@ export function MetadataHead({
       }
     }
     // Next.js accepts a single value or an array, and each entry may be a
-    // plain URL or a descriptor.
+    // plain URL or a descriptor. Unlike images, video and audio URLs are
+    // rendered as written, without resolving them against metadataBase.
     if (og.videos) {
       const videos = normalizeUrlDescriptorEntries(og.videos, (url): OGVideoDescriptor => ({
         url,
       }));
       for (const video of videos) {
-        elements.push(<meta key={key++} property="og:video" content={resolveUrl(video.url)} />);
+        if (video.url)
+          elements.push(
+            <meta key={key++} property="og:video" content={stringifyUrl(video.url)} />,
+          );
         if (video.secureUrl)
           elements.push(
             <meta
               key={key++}
               property="og:video:secure_url"
-              content={resolveUrl(video.secureUrl)}
+              content={stringifyUrl(video.secureUrl)}
             />,
           );
         if (video.type)
@@ -1171,13 +1175,16 @@ export function MetadataHead({
     if (og.audio) {
       const audios = normalizeUrlDescriptorEntries(og.audio, (url): OGAudioDescriptor => ({ url }));
       for (const audio of audios) {
-        elements.push(<meta key={key++} property="og:audio" content={resolveUrl(audio.url)} />);
+        if (audio.url)
+          elements.push(
+            <meta key={key++} property="og:audio" content={stringifyUrl(audio.url)} />,
+          );
         if (audio.secureUrl)
           elements.push(
             <meta
               key={key++}
               property="og:audio:secure_url"
-              content={resolveUrl(audio.secureUrl)}
+              content={stringifyUrl(audio.secureUrl)}
             />,
           );
         if (audio.type)
