@@ -1149,9 +1149,7 @@ export function MetadataHead({
       }));
       for (const video of videos) {
         if (video.url)
-          elements.push(
-            <meta key={key++} property="og:video" content={stringifyUrl(video.url)} />,
-          );
+          elements.push(<meta key={key++} property="og:video" content={stringifyUrl(video.url)} />);
         if (video.secureUrl)
           elements.push(
             <meta
@@ -1176,9 +1174,7 @@ export function MetadataHead({
       const audios = normalizeUrlDescriptorEntries(og.audio, (url): OGAudioDescriptor => ({ url }));
       for (const audio of audios) {
         if (audio.url)
-          elements.push(
-            <meta key={key++} property="og:audio" content={stringifyUrl(audio.url)} />,
-          );
+          elements.push(<meta key={key++} property="og:audio" content={stringifyUrl(audio.url)} />);
         if (audio.secureUrl)
           elements.push(
             <meta
